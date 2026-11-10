@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101b36">
+<title>BIRR — Mini App</title>
+<style>
+:root{--bg:#0b1224;--panel:#151f38;--panel2:#1c2947;--text:#f4f7ff;--muted:#aab6d1;--green:#42d392;--blue:#6c8cff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#111d3b,#080e1d 70%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+main{max-width:560px;margin:auto;padding:22px 16px 100px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.brand{font-size:25px;font-weight:900;letter-spacing:2px}.tag{font-size:12px;color:var(--muted);background:#263454;padding:7px 10px;border-radius:20px}
+h1{font-size:23px;margin:8px 0}.muted{color:var(--muted)}.balance{background:linear-gradient(130deg,#3456c7,#273d88);padding:22px;border-radius:22px;box-shadow:0 14px 35px #0005}
+.balance small{color:#dbe4ff}.amount{font-size:38px;font-weight:850;margin:7px 0}.balance p{margin:0;color:#e2e9ff;font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 24px}.stat,.card{background:var(--panel);border:1px solid #ffffff12;border-radius:17px;padding:16px}.stat b{display:block;font-size:20px;margin-top:5px}
+.section{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 12px}.section h2{font-size:18px;margin:0}
+.task{display:flex;align-items:center;gap:12px;margin-bottom:10px}.emoji{width:42px;height:42px;border-radius:13px;background:var(--panel2);display:grid;place-items:center;font-size:21px;flex:none}
+.task-info{flex:1}.task-info b{display:block}.task-info small{color:var(--muted)}
+button{border:0;border-radius:12px;background:var(--green);color:#082317;font-weight:800;padding:10px 13px;cursor:pointer}
+button:disabled{background:#35435d;color:#b8c2d8;cursor:default}.nav{position:fixed;bottom:0;left:0;right:0;background:#111a30ee;backdrop-filter:blur(12px);border-top:1px solid #ffffff15;display:flex;justify-content:center;gap:30px;padding:13px}
+.nav a{color:var(--muted);text-decoration:none;font-size:12px;text-align:center}.nav span{display:block;font-size:20px}
+.notice{font-size:12px;color:var(--muted);line-height:1.5;margin-top:22px}.refrow{display:flex;gap:8px;margin-top:10px}.refrow input{min-width:0;flex:1;background:#0d1730;color:white;border:1px solid #344263;border-radius:10px;padding:10px}
+</style>
+</head>
+<body>
+<main>
+  <header class="top"><div class="brand">🟢 BIRR</div><div class="tag">DEMO • POINTS</div></header>
+  <h1>Welcome to BIRR</h1><p class="muted" id="hello">Your rewards dashboard</p>
+  <section class="balance"><small>YOUR DEMO POINTS</small><div class="amount" id="points">0</div><p>Points have no cash value in this demo.</p></section>
+  <div class="stats">
+    <div class="stat"><span class="muted">Tasks completed</span><b id="completed">0</b></div>
+    <div class="stat"><span class="muted">Your rank</span><b>New member</b></div>
+  </div>
+  <div class="section"><h2>🎯 Daily tasks</h2><span class="muted">Try the demo</span></div>
+  <div class="card">
+    <div class="task"><div class="emoji">📖</div><div class="task-info"><b>Explore BIRR</b><small>Earn 10 demo points</small></div><button data-points="10">Claim</button></div>
+    <div class="task"><div class="emoji">⭐</div><div class="task-info"><b>Visit the tasks page</b><small>Earn 15 demo points</small></div><button data-points="15">Claim</button></div>
+    <div class="task"><div class="emoji">🎉</div><div class="task-info"><b>Daily check-in</b><small>Earn 5 demo points</small></div><button data-points="5">Claim</button></div>
+  </div>
+  <div class="section"><h2>👥 Invite friends</h2></div>
+  <div class="card"><div class="muted">Your demo invite link</div><div class="refrow"><input id="invite" readonly value="https://t.me/Birr2_Earninig2_Bot"><button id="copy">Copy</button></div><p class="notice">Referral rewards are not enabled in this demo.</p></div>
+  <div class="section"><h2>🏆 Leaderboard</h2></div>
+  <div class="card"><div>🥇 You <strong style="float:right" id="leaderpoints">0 pts</strong></div><p class="notice">Demo leaderboard — only this browser's points are shown.</p></div>
+  <p class="notice">Prototype only: points are stored in this browser and can be reset. Before launch, connect a secure backend, verify Telegram user data on the server, and define fair task rules. Never ask users to pay money to unlock rewards or promise guaranteed earnings.</p>
+</main>
+<nav class="nav"><a href="#"><span>🏠</span>Home</a><a href="#tasks"><span>🎯</span>Tasks</a><a href="#invite"><span>👥</span>Invite</a><a href="#"><span>👤</span>Profile</a></nav>
+<script>
+const key='birr-demo-points', doneKey='birr-demo-done';
+let points=Number(localStorage.getItem(key)||0), done=JSON.parse(localStorage.getItem(doneKey)||'[]');
+function render(){document.getElementById('points').textContent=points.toLocaleString();document.getElementById('completed').textContent=done.length;document.getElementById('leaderpoints').textContent=points+' pts';document.querySelectorAll('[data-points]').forEach((b,i)=>{if(done.includes(i)){b.textContent='Claimed';b.disabled=true}})}
+document.querySelectorAll('[data-points]').forEach((b,i)=>b.addEventListener('click',()=>{if(done.includes(i))return;points+=Number(b.dataset.points);done.push(i);localStorage.setItem(key,points);localStorage.setItem(doneKey,JSON.stringify(done));render()}));
+document.getElementById('copy').addEventListener('click',async()=>{const input=document.getElementById('invite');try{await navigator.clipboard.writeText(input.value);document.getElementById('copy').textContent='Copied!'}catch{input.select();document.execCommand('copy');document.getElementById('copy').textContent='Copied!'}});
+render();
+</script>
+</body></html>
